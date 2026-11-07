@@ -1,0 +1,21 @@
+# dsh-skill-curator bundle patch
+#
+# This file is the `dsh.bundle.patch` layer of the published package. Installing
+# through the official CLI —
+#
+#   dsh plugin --profile web add dsh-skill-curator
+#
+# — reconciles `dsh.profile.bundles` and mounts this row for you. If the profile
+# already carries a manual mount line for this plugin, remove it first so the
+# plugin is not mounted twice (two RPC channels, two settings sections).
+#
+# Optional config (all defaults shown):
+#   refreshSeconds   60     report cache TTL; 0 forces a rescan per request
+#   dshHome          $DSH_HOME or ~/.dsh
+#   sessionsDir      <dshHome>/sessions
+#   stateDir         <dshHome>/skill-curator   (pins.json lives here)
+- insert:
+  - id: 'skill-curator'
+    name: 'dsh-skill-curator'
+    config:
+      refreshSeconds: 60

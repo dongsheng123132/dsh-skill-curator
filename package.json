@@ -1,0 +1,52 @@
+{
+  "name": "dsh-skill-curator",
+  "version": "0.1.0",
+  "description": "Measure the DSH skill catalog, attribute real usage from session logs, and reversibly archive what you do not use. Read-only by default.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "dsh-skill-curator": "./bin/dsh-skill-curator.mjs"
+  },
+  "main": "./plugin.mjs",
+  "exports": {
+    ".": "./plugin.mjs",
+    "./client": "./client.js",
+    "./core": "./lib/report.mjs",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": []
+    }
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "plugin.mjs",
+    "client.js",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "report": "node ./bin/dsh-skill-curator.mjs report",
+    "doctor": "node ./bin/dsh-skill-curator.mjs doctor"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "cordis",
+    "plugin",
+    "skill",
+    "curator",
+    "context-budget"
+  ]
+}
