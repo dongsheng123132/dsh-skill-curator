@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync, existsSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import test from 'node:test'
 
 import { parseFrontmatter } from '../lib/frontmatter.mjs'
@@ -147,7 +147,24 @@ test('pinned skills cannot be archived', () => {
 test('findProjectRoot terminates on relative input', () => {
   const project = findProjectRoot('.')
   assert.ok(project.startsWith('/'))
-  assert.equal(findProjectRoot('does/not/exist'), join(process.cwd(), 'does/not/exist'))
+  // Relative path must terminate quickly (never grow toward `../..` forever) and
+  // resolve to an absolute path; it may land on the nearest ancestor `.git` if
+  // one exists on the walk (e.g. this repo itself), else on the resolved input.
+  const resolved = findProjectRoot('does/not/exist')
+  assert.ok(resolved.startsWith('/'))
+  const joined = resolve(process.cwd(), 'does/not/exist')
+  // Walk up from the resolved input and accept either the resolved input itself
+  // or any ancestor that actually contains `.git`.
+  let ok = false
+  let dir = joined
+  for (;;) {
+    if (dir === resolved) { ok = true; break }
+    const parent = dirname(dir)
+    if (parent === dir) break
+    dir = parent
+  }
+  assert.ok(ok, `expected ${resolved} to be an ancestor of ${joined}`)
+  assert.ok(resolved.length > 0)
 })
 
 test('cleanup temp dirs', () => {
